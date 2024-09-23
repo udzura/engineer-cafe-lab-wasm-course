@@ -13,7 +13,7 @@ paginate: true
 _class: hero
 -->
 
-# WeWebAssemblyで<br>Scratchプラグインを作ろう!
+# WebAssemblyで<br>Scratchプラグインを作ろう!
 
 ## #0 Install Day
 
