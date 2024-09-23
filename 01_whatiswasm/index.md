@@ -229,8 +229,9 @@ _class: hero
 - WASM
 - WASMのビルドの仕方
 - WASMの動かし方（コマンド、ブラウザ）
-- 関数のimport/export
+- 関数のimport/exportの基本
 
+----
 
 # 次回
 
