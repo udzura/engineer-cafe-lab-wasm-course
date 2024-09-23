@@ -8,4 +8,4 @@ theme: default
 
 ## 各講座へのリンク:
 
-- [#0 install day](./00_installday)
+- [#0 install day](./2024-25/00_installday)
