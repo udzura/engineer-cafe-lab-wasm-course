@@ -158,7 +158,7 @@ _class: normal
 _class: normal
 -->
 
-# 本講座の特徴#　2
+# 本講座の特徴#2
 
 <strong style='font-size: 60pt'>難易度やや高めです</strong>
 
@@ -188,6 +188,20 @@ _class: normal
 _class: normal
 -->
 
+# 本講座の免責事項...
+
+- Windows マシンでの動作確認は十分に行っていません
+  - 利用されることは制限しません
+  - 場合によってかなりの部分を自分でトラブルシュートする必要があるかもしれません
+    - （Macでもそうなのですが、Windowsではそうなる確率が上がります）
+  - コマンドライン操作をWSL上での実行に寄せると少し楽かも？
+
+----
+
+<!--
+_class: normal
+-->
+
 # そういうわけで...
 
 - 難易度が高い、一緒に講座を作りたい、ということで
@@ -197,6 +211,114 @@ _class: normal
 - <small>また、テイカー気質の方は少し想定している参加者層とは違うこともご了承ください</small>
 
 <!-- 講座というより、学生の自主ゼミみたいな感じかもしれない -->
+
+----
+
+<!--
+_class: normal
+-->
+
+# オフライン推奨の話
+
+- もう少し解像度を上げます
+
+----
+
+<!--
+_class: normal
+-->
+
+# トラブった時
+
+- 質問をすると思いますが
+- 実は、講師・コーチがそのものずばりの答えを知っていることは少ないです
+
+![bg right:58% w:650](./aruaru.png)
+
+----
+
+<!--
+_class: normal
+-->
+
+# 何ができるか？
+
+- 学習者より**トラブルシュート**が上手なはずです
+- その大きな違いは何かというと、**手数**です
+
+![bg right:58% w:650](./wa-waa.png)
+
+----
+
+<!--
+_class: normal
+-->
+
+## オフラインならば
+
+- コーチと一緒にたくさんある確認事項・試行錯誤をその場で一つずつやっていくことができます
+
+## オンラインでは...
+
+- 数多く（場合によって10以上）の確認事項を**一気に全部**共有しないといけません
+  - 情報量が多く「ワ、ワァ...」となってしまうと思います
+  - かと言って一つずつやるとやり取りがとても遅いため大変です
+  - しかしトラブルの原因はわからないため、見つかるまで**やれることは全部**
+  確認する必要があります
+
+
+----
+
+<!--
+_class: normal
+-->
+
+# そういうわけで
+
+- オフライン推奨 ＝ 必ず起こるトラブルシュートを効率よくするため、です
+- 毎回オフライン参加でなくても大丈夫ですが...
+  - 困ったことがあった場合、どこかでオフラインで質問に来た方が効率が良いことも多いでしょう
+  - （その場合、例えば前回範囲の質問、なども歓迎します）
+
+----
+
+<!--
+_class: normal
+-->
+
+# FYI: オンラインでの質問のコツ
+
+- 以下の**3項目**を意識して言語化しましょう
+  - **(1) やろうとしていること・意図**
+  - **(2) 実際にやったこと（コマンドなど）**
+  - **(3) 結果として起こったこと・何が意図と反するか**
+- **すべてのログを共有しましょう**
+  - めちゃくちゃ長くても大丈夫です、 @udzura はちゃんと読み（め）ます
+  - 変に忖度して削った結果重要な情報が消えているパターンの方が困ります
+  - 同様に、打ったコマンド、書いたコード、検索したワードなども省略せずにありのままに伝えましょう
+
+----
+
+<!--
+_class: normal
+-->
+
+# 参考になるページ
+
+- よく言及されますが:
+  - <span style='font-size: 28pt'>[「技術的なお問い合わせに関するガイドライン」](https://aws.amazon.com/jp/premiumsupport/tech-support-guidelines/)</span>
+  - @ AWSサポートページ
+
+----
+
+<!--
+_class: normal
+-->
+
+# いろいろ言いましたが...
+
+- 基本楽しくやっていきましょう
+- トラブルも楽しむ！（？）
 
 ----
 
@@ -212,13 +334,14 @@ _class: hero
 _class: normal
 -->
 
-# はじめに
+# はじめにコピペ元を掲示
 
 - 今日の資料は以下にもアップされています
   - 元テキスト: https://github.com/udzura/engineer-cafe-lab-wasm-course
     - `00_installday` ディレクトリ
   - スライド: https://udzura.jp/engineer-cafe-lab-wasm-course/2024-25/00/
 - `[udzura github wasm course]` で検索？
+  - コマンドは全然コピペしちゃっていいです！
 
 ----
 
@@ -229,12 +352,12 @@ _class: normal
 # インストール/セットアップする環境
 
 - 前提となるツール
-  - Mac: Homebrew
-  - Windows: WSL2
-- ブラウザ
-- Rustの開発環境
-- WASMの開発環境
-- エディタ
+  - ✅ Mac: Homebrew
+  - ✅ Windows: WSL2
+- ✅ ブラウザ: Chrome
+- ✅ Rustの開発環境
+- ✅ WASMの開発環境
+- ✅ エディタ
 
 ----
 
@@ -244,7 +367,12 @@ _class: normal
 
 # Mac: Homebrewのセットアップ
 
-- URL
+- https://brew.sh/ja/ の指示の通りコマンドを実行してください
+
+## 参考情報
+
+- Rails Girls GuideのHomebrewセットアップの項目も参考になります
+  - https://railsgirls.jp/install/macos
 
 ----
 
@@ -254,6 +382,12 @@ _class: normal
 
 # Windows: WSL2環境の立ち上げ
 
+- Rails Girls Guideの「WSLの導入」を参考にして、Ubuntuアプリケーションを起動してください
+  - https://railsgirls.jp/install/windows-wsl
+
+## 更なる便利な情報
+- Cドライブにあるファイルを参照したり、WSLのホームに作ったファイルを    Windows側から参照する方法は例えば以下を参考にしてください
+  - https://qiita.com/quzq/items/1096c638c0d86795be13
 
 ----
 
@@ -264,7 +398,7 @@ _class: normal
 # ブラウザ
 
 - （もしインストールしていなければ） Chrome をインストールしてください
-- URL
+  - https://support.google.com/chrome/answer/95346?hl=ja
 
 ----
 
@@ -275,8 +409,12 @@ _class: normal
 # Rustの開発環境
 
 - Rustの環境一式をセットアップしておきましょう
+  - https://www.rust-lang.org/ja/tools/install
+- 選択肢は全てデフォルトで大丈夫です
+- **PATH環境変数を設定する** のを忘れずに
 
 ```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 - Windowsの方: この作業はWSL2のコンソールで実行してください
@@ -292,6 +430,8 @@ _class: normal
 - RustでWASMをビルドできるよう以下のコマンドも追加で打ちます
 
 ```
+rustup target add wasm32-wasi
+rustup target add wasm32-unknown-unknown
 ```
 
 ----
@@ -301,6 +441,15 @@ _class: normal
 -->
 
 # Rustの動作確認
+
+```bash
+cargo new test-crate --bin
+cd test-crate 
+cargo build
+./target/debug/test-crate 
+
+#=> Hello, world! と表示されればOK
+```
 
 ----
 
@@ -312,9 +461,13 @@ _class: normal
 
 - Macの方...
   - Homebrew経由で簡単にインストールできます
-  - **WasmEdge**
+  - **wasmtime**
   - **WABT** (WebAssembly Binary Toolkit)
   - **wasm-tools**
+
+```
+brew install wasmtime wabt wasm-tools
+```
 
 ----
 
@@ -325,10 +478,31 @@ _class: normal
 # WASMの開発環境/Win or Linux
 
 - Windowsの方...
-  - WSL2 の方に以下をインストールします。Linux用のバイナリを選択することになるでしょう
-  - **WasmEdge**
+  - WSL2 の方に以下をインストールします。
+  - **wasmtime**
   - **WABT** (WebAssembly Binary Toolkit)
+    - Linux用のバイナリを選択
   - **wasm-tools**
+
+----
+
+<!--
+_class: normal
+-->
+
+# WASMの開発環境/Win or Linux(コマンド)
+
+```bash
+# wasmtime
+curl https://wasmtime.dev/install.sh -sSf | bash
+. /home/ubuntu/.bashrc
+# wabt (x64前提)
+wget https://github.com/WebAssembly/wabt/releases/download/1.0.36/wabt-1.0.36-ubuntu-20.04.tar.gz
+tar xzf wabt-1.0.36-ubuntu-20.04.tar.gz
+sudo mv wabt-1.0.36/bin/* /usr/local/bin
+# wasm-tools
+cargo install --locked wasm-tools
+```
 
 ----
 
@@ -338,7 +512,40 @@ _class: normal
 
 # WASMツールの動作確認
 
-- 以下のwasmバイナリを用意してみましたので、ダウンロードしてください
+- 以下のwasmバイナリをRust経由で作ってみる
+
+```bash
+cargo build --target wasm32-wasi
+file target/wasm32-wasi/debug/test-crate.wasm
+
+# target/wasm32-wasi/debug/test-crate.wasm: WebAssembly \
+# (wasm) binary module version 0x1 (MVP)
+# ... のように表示される(1行で)
+```
+
+----
+
+<!--
+_class: normal
+-->
+
+# WASMツールの動作確認(2)
+
+- wasmtimeで実行しましょう
+
+```bash
+wasmtime target/wasm32-wasi/debug/test-crate.wasm
+# Hello, world! と同じように出力される
+```
+
+- 他のツールも試しましょう
+
+```bash
+wasm-objdump -x target/wasm32-wasi/debug/test-crate.wasm || echo NG!
+# NG! と出なければOK
+wasm-tools validate -v target/wasm32-wasi/debug/test-crate.wasm || echo NG!
+# NG! と出なければOK
+```
 
 ----
 
@@ -350,7 +557,9 @@ _class: normal
 
 - 基本的に自由です
 - こだわりがなければ VSCode が良いかと思います
-- VSCodeの場合、以下の拡張を入れます
+- VSCodeの場合、以下の拡張を入れます（すごく種類があるがこれがいいみたい）
+  - [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+  - TypeScriptについてはVSCodeは組み込みでサポートされています
 
 ----
 
@@ -360,8 +569,9 @@ _class: normal
 
 # 今日のまとめ
 
+- 講座の雰囲気や狙い、学習者の心得的な話をしました
 - 必要と思われるツールをまずはセットアップしました
-  - 今後の展開で随時追加するかもしれません
+  - 今後の展開で随時追加するかもしれませんが
 - 一緒にWASM講座、作っていきましょう
 
 ----
@@ -373,3 +583,4 @@ _class: normal
 # 次回
 
 - #1 小さな WebAssembly モジュールを動かそう
+  - <span style='font-size: 30pt'>予定: 10/27(日) 14:00 start</span>
