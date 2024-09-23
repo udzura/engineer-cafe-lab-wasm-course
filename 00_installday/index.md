@@ -5,7 +5,7 @@ description: "At Engineer Cafe Lab Fukuoka 2024/10"
 header: "WebAssemblyでScratchプラグインを作ろう!"
 footer: "#0 Install Day"
 theme: ecl
-image: https://udzura.jp/engineer-cafe-lab-wasm-course/2024-25/00_installday/ogp.png#TODO
+image: https://udzura.jp/engineer-cafe-lab-wasm-course/2024-25/00_installday/ogp.png
 paginate: true
 ----
 
@@ -243,8 +243,8 @@ _class: normal
 
 # 何ができるか？
 
-- 学習者より**トラブルシュート**が上手なはずです
-- その大きな違いは何かというと、**手数**です
+* 学習者より**トラブルシュート**が上手なはずです
+* その大きな違いは何かというと、**手数**です
 
 ![bg right:58% w:650](./wa-waa.png)
 
@@ -256,11 +256,11 @@ _class: normal
 
 ## オフラインならば
 
-- コーチと一緒にたくさんある確認事項・試行錯誤をその場で一つずつやっていくことができます
+* コーチと一緒にたくさんある確認事項・試行錯誤をその場で一つずつやっていくことができます
 
 ## オンラインでは...
 
-- 数多く（場合によって10以上）の確認事項を**一気に全部**共有しないといけません
+* 数多く（場合によって10以上）の確認事項を**一気に全部**共有しないといけません
   - 情報量が多く「ワ、ワァ...」となってしまうと思います
   - かと言って一つずつやるとやり取りがとても遅いため大変です
   - しかしトラブルの原因はわからないため、見つかるまで**やれることは全部**
@@ -512,9 +512,10 @@ _class: normal
 
 # WASMツールの動作確認
 
-- 以下のwasmバイナリをRust経由で作ってみる
+- 以下のwasmバイナリをRustで作ってみる
 
 ```bash
+# 先ほどhello worldしたプロジェクトで実行
 cargo build --target wasm32-wasi
 file target/wasm32-wasi/debug/test-crate.wasm
 
