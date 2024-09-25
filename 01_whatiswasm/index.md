@@ -21,6 +21,7 @@ _class: hero
 
 # 今日やるゴール
 
+- WebAssemblyとは？
 - WASM のバイナリ構造・セクションについて（初級）
 - 手元でWASMを動かす
   - その1
@@ -35,7 +36,78 @@ _class: hero
 _class: hero
 -->
 
+# WebAssembly(WASM)の概要
+
+----
+
+# WebAssembly ってそもそも何？
+
+- なんか... ブラウザで動くやつ...
+- 「ブラウザ上でJS以外の言語を動かすことができる技術」
+  - 最近使われてるらしい
+  - Ruby、Python、Kotlin、他色々対応しつつあるらしい
+- WASMとも呼ばれる。だいたい同じものを指す
+
+----
+
+# 具体的なユースケースから
+
+- Unity3d
+- Goolge Meet
+- Figma（[高速化の事例](https://www.figma.com/ja-jp/blog/webassembly-cut-figmas-load-time-by-3x/)）
+- Linux on browser, ...
+
+----
+
+# Unity3d
+
+- 3Dゲームをブラウザで動かすことができる
+  - そこでWASMを使っている
+- https://docs.unity3d.com/ja/2022.1/Manual/webgl-native-plugins-with-emscripten.html
+
+----
+
+# Goolge Meet
+
+- ビデオ通話の背景ぼかしに利用
+- https://developers-jp.googleblog.com/2023/05/webassembly.html
+
+![bg right w:500](./meet.png)
+　
+
+----
+
+# Linux on Browser
+
+- [webvm.io](https://webvm.io/)
+
+![bg right w:600](./webvm.png)
+
+----
+
+# WASMが得意なこと
+
+- 高速な処理
+- 言語を選ばず実装可能
+- ポータブル（ブラウザでもサーバでも組み込んで動く）
+
+----
+
+# ブラウザの他で動く例
+
+- wasmで設定を書く（ロードバランサーのenvoyほか）
+- wasmプログラムををコンテナとして動かす
+  - [kubernetesの下でwasmを動かす](https://krustlet.dev/)
+
+----
+
+<!--
+_class: hero
+-->
+
 # WASM のバイナリ構造とセクション
+
+- 概要の次でいきなりバイナリの話かよ！
 
 ----
 
