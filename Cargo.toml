@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "samples/test-crate",
+    "samples/fukuoka-ecl-imagetest"
+]
