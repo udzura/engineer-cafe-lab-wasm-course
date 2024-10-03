@@ -1,0 +1,58 @@
+/* @theme ecl */
+
+@import 'default';
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap');
+
+section {
+    font-family: "M PLUS Rounded 1c", sans-serif !important;
+}
+h1 {
+    font-weight: 500;
+    color: #0099aa;
+}
+h2, h3 {
+    font-weight: 500;
+    color: #3399aa;
+}
+section.hero h1 {
+    font-weight: 700 !important;
+    font-size: 80px;
+}
+section.hero2 h1 {
+    width: 100% !important;
+    font-weight: 700 !important;
+    font-size: 80px;
+}
+
+strong {
+    font-weight: 500;
+    color: #0000cc;
+}
+
+section.profile img {
+    position: absolute;
+    top: 25%;
+    left: 65%;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+}
+
+section:not(.quote) blockquote {
+    position: absolute;
+    border: 1px solid black;
+    padding: 0.3em 0.8em;
+    font-size: 15pt;
+    top: 80%;
+    left: 40%;
+    background-color: #f9f9f9;
+}
+
+section.wider-note blockquote {
+    position: absolute;
+    border: 1px solid black;
+    padding: 0.3em 0.8em;
+    font-size: 15pt;
+    top: 80%;
+    left: 10%;
+    background-color: #f9f9f9;
+}
