@@ -20,6 +20,23 @@ _class: hero
 ----
 
 <!--
+_class: profile
+-->
+
+# Uchio Kondo (@udzura)
+
+- 福岡市エンジニアカフェ ハッカーサポーター
+- フィヨルドブートキャンプ アドバイザー
+- [RubyKaigi Speaker (2016 ~)](https://rubykaigi-speakers.vercel.app/speakers/Uchio+KONDO)
+- 共同翻訳: 『入門eBPF』(オライリージャパン)
+- うどんは資さんうどん過激派
+
+![w:370](./rk2024-me-2.png)
+
+
+----
+
+<!--
 _class: hero
 -->
 
