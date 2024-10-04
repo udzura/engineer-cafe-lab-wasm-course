@@ -1,0 +1,22 @@
+<html></html>
+  <head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+      const importObject = {
+	      imports: {},
+      };
+
+      WebAssembly.instantiateStreaming(fetch("./hello_wasm.wasm"), importObject).then(
+	  (obj) => {
+	      let answer = obj.instance.exports.add(51, 51);
+	      alert("answer: 51 + 51 = " + answer.toString());
+	      console.log("it works!");
+	  },
+      );
+    </script>
+  </head>
+  <body>
+    <h1>Wasm working on browser</h1>
+    
+  </body>
+</html>
