@@ -387,7 +387,7 @@ _class: normal
 - 今日の資料は以下にもアップされています
   - 元テキスト: https://github.com/udzura/engineer-cafe-lab-wasm-course
     - `00_installday` ディレクトリ
-  - スライド: https://udzura.jp/engineer-cafe-lab-wasm-course/2024-25/00/
+  - スライド: https://udzura.jp/engineer-cafe-lab-wasm-course/2024-25/00_installday/
 - `[udzura github wasm course]` で検索？
   - コマンドは全然コピペしちゃっていいです！
 
