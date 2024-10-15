@@ -56,3 +56,30 @@ section.wider-note blockquote {
     left: 10%;
     background-color: #f9f9f9;
 }
+
+/* from https://qiita.com/ShibuKazu/items/8c35f8b6ebe24af03cdc */
+.split {
+    display: table;
+    width: 100%;
+  }
+  .split-item {
+    display: table-cell;
+    margin: 15px;
+    width: 40%;
+  }
+  .split-left {
+    position: relative;
+  }
+  .split-left__inner {
+    height: 100%;
+    position: fixed;
+    width: 42%;
+  }
+  .split-right {
+    position: relative;
+  }
+  .split-right__inner {
+    height: 100%;
+    width: 99%;
+  }
+  
