@@ -1,0 +1,20 @@
+<html><head>
+    <title>My first wasm</title>
+    <script type="module">
+        import {WASI, File, OpenFile, ConsoleStdout} from 'https://cdn.jsdelivr.net/npm/@bjorn3/browser_wasi_shim@0.3.0/+esm'
+        const fds = [
+            new OpenFile(new File([])), // 0
+            ConsoleStdout.lineBuffered(msg => console.log(`[WASI stdout] ${msg}`)), // 1
+            ConsoleStdout.lineBuffered(msg => console.warn(`[WASI stderr] ${msg}`)), // 2
+        ];
+        const wasi = new WASI([], [], fds);
+        const obj = {
+            "wasi_snapshot_preview1": wasi.wasiImport,
+        };
+        const wasm = await WebAssembly.compileStreaming(fetch("hello2.wasm"));
+        const instance = await WebAssembly.instantiate(wasm, obj);
+        wasi.start(instance);
+    </script>
+    </head>
+    <body><h1>WASI working on browser</h1></body>
+</html>
