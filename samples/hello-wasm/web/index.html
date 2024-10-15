@@ -1,0 +1,16 @@
+<html><head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+        const obj = {
+            imports: {},
+        };
+        WebAssembly.instantiateStreaming(fetch("./hello_wasm.wasm"), obj).then(
+            (obj) => {
+                let answer = obj.instance.exports.fib(20);
+                alert("answer: fib(20) = " + answer.toString());
+                console.log("debug: it works!");
+            },
+        );
+    </script></head>
+    <body><h1>Wasm working on browser</h1></body>
+</html>

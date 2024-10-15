@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
     "samples/hello-wasm",
+    "samples/hello-more",
     "samples/test-crate",
     "samples/fukuoka-ecl-imagetest"
 ]

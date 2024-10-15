@@ -37,7 +37,7 @@ section.profile img {
     border-radius: 50% !important;
 }
 
-section:not(.quote) blockquote {
+section.mynote blockquote {
     position: absolute;
     border: 1px solid black;
     padding: 0.3em 0.8em;

@@ -1,0 +1,15 @@
+<html><head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+        const obj = {
+            imports: {},
+        };
+WebAssembly.instantiateStreaming(fetch("./hello2.wasm"), obj).then(
+    (obj) => {
+        // ロードOKだけログに出してみよう
+        console.log("debug: load OK!");
+    },
+);
+    </script></head>
+    <body><h1>Wasm working on browser</h1></body>
+</html>

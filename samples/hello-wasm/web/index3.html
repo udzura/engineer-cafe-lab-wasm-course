@@ -1,0 +1,19 @@
+<html><head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+        const obj = {
+            env: {
+                my_callback: function (value) {
+                    console.log("callback value = " + value.toString());
+                }
+            },
+        };
+        WebAssembly.instantiateStreaming(fetch("./hello3.wasm"), obj).then(
+            (obj) => {
+                let answer = obj.instance.exports.fib(20);
+                console.log("answer: fib(20) = " + answer.toString());
+            },
+        );
+    </script></head>
+    <body><h1>Wasm working on browser</h1></body>
+</html>

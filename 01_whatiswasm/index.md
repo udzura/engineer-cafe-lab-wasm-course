@@ -265,16 +265,22 @@ crate-type = ["cdylib", "rlib"]
 
 # 関数を実装してみよう
 
-```
-$ code src/lib.rs
-```
-
-- 自動生成されたコードを一通り消して、これだけにする
+- `src/lib.rs` のコードを一通り消して、これだけにする
 
 ```rust
 #[no_mangle]
-pub fn add(left: i32, right: i32) -> i32 {
-    left + right
+pub fn fib(n: i32) -> i32 {
+    match n {
+        ..=-1 => {
+            0
+        }
+        ..=1 => {
+            1
+        }
+        _ => {
+            fib(n-1) + fib(n-2)
+        }
+    }
 }
 ```
 
@@ -298,10 +304,10 @@ $ file ./target/wasm32-unknown-unknown/debug/hello_wasm.wasm
 # wasmtime で動作確認する
 
 ```bash
-$ wasmtime --invoke add ./target/wasm32-unknown-unknown/debug/hello_wasm.wasm 1 2 
+$ wasmtime --invoke fib ./target/wasm32-unknown-unknown/debug/hello_wasm.wasm 20 
 # warning: using `--invoke` with a function
 #   that takes arguments is experimental and may break in the future...
-3
+10946
 ```
 
 ----
@@ -354,7 +360,7 @@ Hello Engineer Cafe!
 ```
 Export[4]:
  - memory[0] -> "memory"
- - func[0] <add> -> "add"
+ - func[0] <fib> -> "fib"
  - global[1] -> "__data_end"
  - global[2] -> "__heap_base"
 ```
@@ -407,31 +413,70 @@ _class: hero
 
 # first project の方のバイナリを使う
 
+- `target/wasm32-unknown-unknown/debug/hello_wasm.wasm` の方を使う
+- `web` というディレクトリを新たに作ってそこへコピー
+
+```
+$ mkdir web
+$ cp target/wasm32-unknown-unknown/debug/hello_wasm.wasm web
+```
+
 ----
 
 # index.html を作ろう
 
+- `web/index.html` を編集
+
+```html
+<html><head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+        const obj = {
+            imports: {},
+        };
+        WebAssembly.instantiateStreaming(fetch("./hello_wasm.wasm"), obj).then(
+            (obj) => {
+                let answer = obj.instance.exports.fib(20);
+                alert("answer: fib(20) = " + answer.toString());
+                console.log("debug: it works!");
+            },
+        );
+    </script></head>
+    <body><h1>Wasm working on browser</h1></body>
+</html>
+```
 
 ----
 
 # instanciateとはなんぞや？
+
+- [MDN: `WebAssembly.instantiateStreaming()`](https://developer.mozilla.org/ja/docs/WebAssembly/JavaScript_interface/instantiateStreaming_static)
+
+> `WebAssembly.instantiateStreaming()` 関数は、ソースのストリームから直接 WebAssembly モジュールをコンパイルしてインスタンス化します。これは、 wasm コードをロードするための最も効率的で最適な方法です。
+
+- 2つの引数: `source`, `importObject`
+- プロミスを返すので、wasmをロードしてからの処理をつなげる
 
 ----
 
 # 手元にサーバを立てて確認しよう
 
 ```
-cd
+$ cd web
+$ python3 -m http.server 8080
 
 # 手元にRubyが入ってる人はこっちでもOKです
 # 講師はRubyの方が慣れてるので手癖でこっちを叩きますが、お好きな方で
 ruby -run -e httpd -- .
 ```
 
+- http://localhost:8080/ にアクセス
+
 ----
 
-# fibを計算できました！
+# ブラウザで<br>fibを計算できました！
 
+![bg right:65% w:750](./hellofib.png)
 
 ----
 
@@ -439,7 +484,7 @@ ruby -run -e httpd -- .
 _class: hero
 -->
 
-# importとexport
+# シン・importとexport
 
 ----
 
@@ -451,67 +496,213 @@ _class: hero
 # まずは: 先ほどの「hello world」
 
 - 文字列を出力する方のwasmバイナリをブラウザで動かしてみる
+- fibが動いたけん楽勝やろ？
+
+```
+$ cp ./target/wasm32-wasi/debug/hello-wasm.wasm web/hello2.wasm
+```
+
+```javascript
+WebAssembly.instantiateStreaming(fetch("./hello2.wasm"), obj).then(
+    (obj) => {
+        // ロードOKだけログに出してみよう
+        console.log("debug: load OK!");
+    },
+);
+```
 
 ----
 
 # エラーになります
 
+![w:950](./error.png)
+
 ----
 
 # エラーメッセージを覚えておいてください
+
+```
+Uncaught (in promise) TypeError: WebAssembly.instantiate():
+Import #0 "wasi_snapshot_preview1": module is not an object or function
+```
 
 ----
 
 # importとexportの話
 
+- エラーメッセージを翻訳すると: **Import** すべきモジュールが指定されていない
+- さっきは不要だったけど、なぜ？
+- 逆に対になる **Export** もあるけど、つまりこれは何？
+
+```javascript
+// What is exports ??
+let answer = obj.instance.exports.fib(20);
+```
 
 ----
 
 # importとexportを使うコードを書いてみよう
 
+- あえて両方を使ってみる
+- 混乱しないように新しいcrateを作っておこう
+
+```
+$ cargo new --lib hello-more
+$ cd hello-more
+$ code Cargo.toml # 前のスライド参照
+$ code src/lib.rs
+```
+
+----
+
+```rust
+extern "C" {
+    fn my_callback(n: i32);
+}
+
+#[no_mangle]
+pub unsafe fn fib(n: i32) -> i32 {
+    let r = match n {
+        ..=-1 => {
+            0
+        }
+        ..=1 => {
+            1
+        }
+        _ => {
+            fib(n-1) + fib(n-2)
+        }
+    };
+    my_callback(r);
+    r
+}
+```
 
 ----
 
 # まずはビルドしてみよう
 
+```
+$ cargo build --target wasm32-unknown-unknown
+```
+
 ----
 
 # セクションを確認してみよう
 
+```
+$ wasm-objdump -x -j Export ./target/wasm32-unknown-unknown/debug/hello_more.wasm 
+# or Import
+
+Export[4]:
+ - memory[0] -> "memory"
+ - func[1] <fib> -> "fib"
+ - global[1] -> "__data_end"
+ - global[2] -> "__heap_base"
+
+Import[1]:
+ - func[0] sig=3 <my_callback> <- env.my_callback
+```
 
 ----
 
 # これをブラウザで使うには？
 
-- 前のコードだとこういうエラーが出る
+- 前のコードをそのまま流用してみる
+- （また）こういうエラーが出る
+
+```
+index3.html:1 Uncaught (in promise) TypeError: WebAssembly.instantiate(): 
+Import #0 "env": module is not an object or function
+```
 
 ----
 
-# importObject とは？
+# importObject 引数の話
 
+- `instantiateStreaming()` の2番目の引数 `importObject` を経由して関数を渡すことができる
+
+```javascript
+const importObject = {
+    imports: { .... },
+};
+WebAssembly.instantiateStreaming(
+    fetch("./hello.wasm"),
+    importObject
+).then(...)
+```
 
 ----
 
 # 「コールバック」をwasmに渡してみよう
 
+```javascript
+const obj = {
+    env: {
+        // これがコールバック
+        my_callback: function (value) {
+            console.log("callback value = " + value.toString());
+        }
+    },
+};
+WebAssembly.instantiateStreaming(fetch("./hello3.wasm"), obj).then(
+    (obj) => {
+        let answer = obj.instance.exports.fib(20);
+        console.log("answer: fib(20) = " + answer.toString());
+    },
+);
+```
+
 ----
 
 # 動作確認
 
+![w:880](./callback.png)
+
 ----
 
-# じゃあ、WASIとは結局何？
+# ところで
+
+- 「WASIについては置いておきましょう」と言いました
+  - この段階で、WASIについて理解するための道具が整理できました
+- 少しだけ寄り道してみましょう
+
+----
+
+# 改めて: WASI
+
+- 教科書的説明
+
+> Webブラウザ以外の実行環境において、WebAssemblyに備わっていることが望ましいさまざまなシステムインターフェイスを策定し実現するもの -- [Publickey](https://www.publickey1.jp/blog/19/webassemblywebwasimozillanodejs.html)
+
+- WASMからシステムへのインタフェースの規約
+
+![bg right:35% w:390](./wasi.png)
+
+----
+
+# WASIとは結局何？
 
 - 「OSのような環境」で動かすためにあらかじめ規定されたimport関数のセット、と見なすことができる
   - まさにPOSIXのような感じ
 
 ----
 
-# ブラウザを「WASI対応させる」
+# 「WASI対応」とは結局
+
+- システムに合わせて、import用の関数のセットを実装することに他ならない
+
+![bg right w:500](./impl.png)
+
+----
+
+# ブラウザを「WASI対応」させる
 
 - WASIのimport関数を実装したものをブラウザで用意すればいい
+  - 不要なものは何ならダミーでもいい
+- OSSでもいくつか存在する
 - 例えば:
-  - wasi_shim
+  - [browser_wasi_shim](https://github.com/bjorn3/browser_wasi_shim)
 
 ----
 

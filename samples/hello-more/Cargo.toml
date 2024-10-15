@@ -1,5 +1,5 @@
 [package]
-name = "hello-wasm"
+name = "hello-more"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,8 +7,6 @@ edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
-#crate-type = ["lib"]
 
 [profile.release]
-# Tell `rustc` to optimize for small code size.
 opt-level = "s"
