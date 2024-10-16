@@ -25,7 +25,7 @@ _class: hero
 - WASM のバイナリ構造・セクションについて概要
 - 手元でWASMを動かす
   - その1
-  - その2 / WASIにも触れる
+  - その2 (WASI)
 - ブラウザで動かす
 - importとexportの話をする
   - ブラウザで連携するには？
@@ -96,20 +96,20 @@ _class: hero
 
 # ブラウザの外で動く例
 
-- wasmで設定を書く（ロードバランサーのenvoyほか）
+- WASMで設定を書く（ロードバランサーのenvoyほか）
   - https://github.com/envoyproxy/envoy-wasm
   - https://docs.fluentbit.io/manual/pipeline/filters/wasm
-- wasmプログラムををコンテナとして動かす
-  - [kubernetesの下でwasmを動かす](https://krustlet.dev/)
+- WASMプログラムをコンテナとして動かす
+  - [kubernetesの下でWASMを動かす](https://krustlet.dev/)
 
 ----
 
 # WASMの作り方
 
-- Rustのwasm backend
+- RustのWASM backend
   - wasm_bindgenのようなツール/SDKも豊富
 - emscripten
-  - C/C++ をwasmにする、ブラウザとのグルー部分も生成する
+  - C/C++ をWASMにする、ブラウザとのグルー部分も生成する
 - AssemblyScript
   - TypeScript のサブセット
 - 各言語での個別の対応
@@ -382,9 +382,9 @@ Hello Engineer Cafe!
 
 ----
 
-# 2つのwasmバイナリの違い
+# 2つのWASMバイナリの違い
 
-### add
+### fib
 
 ```
 Export[4]:
@@ -405,9 +405,9 @@ Export[3]:
 
 ----
 
-# 2つのwasmバイナリの違い
+# 2つのWASMバイナリの違い
 
-### add
+### fib
 
 ```
 Section not found: Import
@@ -427,7 +427,9 @@ Import[4]:
 
 # WASI？ ワシには難しくて...
 
-- WASIとは何か？を踏み込んだところは一旦保留して先に進みます
+- WASI = WebAssembly System Interface
+- では、WASIとは何か？を踏み込んだところは一旦保留して
+  - 先に進みます
 
 ----
 
@@ -458,7 +460,7 @@ $ cp target/wasm32-unknown-unknown/debug/hello_wasm.wasm web
 
 ```html
 <html><head>
-    <title>My first wasm</title>
+    <title>My first WASM</title>
     <script async type="text/javascript">
         const obj = {
             imports: {},
@@ -477,14 +479,14 @@ $ cp target/wasm32-unknown-unknown/debug/hello_wasm.wasm web
 
 ----
 
-# instanciateとはなんぞや？
+# instantiateとはなんぞや？
 
 - [MDN: `WebAssembly.instantiateStreaming()`](https://developer.mozilla.org/ja/docs/WebAssembly/JavaScript_interface/instantiateStreaming_static)
 
-> `WebAssembly.instantiateStreaming()` 関数は、ソースのストリームから直接 WebAssembly モジュールをコンパイルしてインスタンス化します。これは、 wasm コードをロードするための最も効率的で最適な方法です。
+> `WebAssembly.instantiateStreaming()` 関数は、ソースのストリームから直接 WebAssembly モジュールをコンパイルしてインスタンス化します。これは、 WASMコードをロードするための最も効率的で最適な方法です。
 
 - 2つの引数: `source`, `importObject`
-- プロミスを返すので、wasmをロードしてからの処理をつなげる
+- プロミスを返すので、WASMをロードしてからの処理をつなげる
 
 ----
 
@@ -495,8 +497,8 @@ $ cd web
 $ python3 -m http.server 8080
 
 # 手元にRubyが入ってる人はこっちでもOKです
-# 講師はRubyの方が慣れてるので手癖でこっちを叩きますが、お好きな方で
-ruby -run -e httpd -- .
+# お好きな方で
+$ ruby -run -e httpd -- .
 ```
 
 - http://localhost:8080/ にアクセス
@@ -524,8 +526,9 @@ _class: hero
 
 # まずは: 先ほどの「hello world」
 
-- 文字列を出力する方のwasmバイナリをブラウザで動かしてみる
+- 文字列を出力する方のWASMバイナリをブラウザで動かしてみる
 - fibが動いたけん楽勝やろ？
+- 同じように web ディレクトリにコピーし、 index.html を加工してロードする
 
 ```
 $ cp ./target/wasm32-wasi/debug/hello-wasm.wasm web/hello2.wasm
@@ -663,7 +666,7 @@ WebAssembly.instantiateStreaming(
 
 ----
 
-# 「コールバック」をwasmに渡してみよう
+# 「コールバック」をWASMに渡してみよう
 
 ```javascript
 const obj = {
