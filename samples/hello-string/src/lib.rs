@@ -1,10 +1,12 @@
 // use core::slice;
 
 use core::slice::from_raw_parts_mut;
+use core::slice::from_raw_parts;
+use wasm_bindgen::prelude::wasm_bindgen;
 
-#[no_mangle]
-pub fn hello() -> &'static str {
-    "Hello, world"
+#[wasm_bindgen]
+pub fn hello_bg() -> String {
+    "Hello, world".to_string()
 }
 
 #[no_mangle]
@@ -19,12 +21,11 @@ pub unsafe fn hello3(buf: *mut u8, buflen: i32) {
     buf.copy_from_slice(src);
 }
 
-#[no_mangle]
-pub fn welcome(src: &str) -> i32 {
+#[wasm_bindgen]
+pub fn welcome_bg(src: &str) -> i32 {
     src.as_bytes()[0] as i32
 }
 
-use core::slice::from_raw_parts;
 #[no_mangle]
 pub unsafe fn welcome2(src: *mut u8, srclen: i32) -> i32 {
     let src: &[u8] = from_raw_parts(src, srclen as usize);

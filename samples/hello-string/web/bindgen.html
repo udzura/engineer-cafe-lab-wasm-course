@@ -1,0 +1,13 @@
+<html><head>
+    <title>My first wasm</title>
+    <script async type="module">
+        import init, {hello_bg, welcome_bg} from './pkg/hello_string.js';
+        await init();
+        let result = hello_bg();
+        console.log(result);
+
+        let result2 = welcome_bg("Welcome world");
+        console.log("code of W is: " + result2.toString());
+    </script></head>
+    <body><h1>Wasm bindgen on browser</h1></body>
+</html>
