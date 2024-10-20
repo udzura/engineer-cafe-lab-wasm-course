@@ -1,0 +1,22 @@
+<html><head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+        const obj = {};
+        WebAssembly.instantiateStreaming(fetch("./string1.wasm"), obj).then(
+            (wasm) => {
+                window.wasm = wasm;
+                let msg = "Hello from JavaScript";
+                let offset = wasm.instance.exports.__heap_base;
+                let memory = wasm.instance.exports.memory;
+                let buffer = new Uint8Array(memory.buffer, offset, msg.length);
+                for( var i = 0; i < msg.length; i++ ) {
+                    buffer[i] = msg.charCodeAt(i);
+                }
+                let result = wasm.instance.exports.welcome(offset, msg.length);
+                let msg2 = "result = " + result.toString();
+                console.log(msg2);
+            },
+        );
+    </script></head>
+    <body><h1>Wasm working on browser</h1></body>
+</html>

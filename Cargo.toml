@@ -4,6 +4,10 @@ resolver = "2"
 members = [
     "samples/hello-wasm",
     "samples/hello-more",
+    "samples/hello-string",
     "samples/test-crate",
     "samples/fukuoka-ecl-imagetest"
-]
+, "samples/hello-string"]
+
+[profile.release]
+opt-level = "s"

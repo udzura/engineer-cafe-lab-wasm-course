@@ -1,0 +1,37 @@
+<html><head>
+    <title>My first wasm</title>
+    <script async type="text/javascript">
+        const obj = {};
+        window.wasmInstance = null;
+        window.wordcount = null;
+        window.fire = function() {
+            if (wasmInstance === null) {
+                return
+            }
+            let input = document.getElementById("target").value;
+            let offset = wasmInstance.exports.__heap_base;
+            let memory = wasmInstance.exports.memory;
+            let buffer = new Uint8Array(memory.buffer, offset, input.length);
+            for( var i = 0; i < input.length; i++ ) {
+                buffer[i] = input.charCodeAt(i);
+            }
+
+            let result = wordcount(offset, input.length);
+            let msg = "result = " + result.toString();
+            alert(msg);
+        }
+        WebAssembly.instantiateStreaming(fetch("./wc.wasm"), obj).then(
+            (wasm) => {
+                window.wasmInstance = wasm.instance;
+                window.wordcount = wasm.instance.exports.wordcount
+                console.log("loaded!")
+            },
+        );
+    </script></head>
+    <body>
+        <h1>WordCounter!</h1>
+        <textarea rows="10" cols="80"
+         id="target">Default text...</textarea>
+        <input type="button" onclick="fire();" value="Count!"/>
+    </body>
+</html>
