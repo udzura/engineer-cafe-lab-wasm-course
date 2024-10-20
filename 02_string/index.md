@@ -560,6 +560,8 @@ _class: hero
 
 # 図
 
+![w:840](./wordcount.png)
+
 ----
 
 # Rust側をまずは書いておく
@@ -695,16 +697,72 @@ _class: hero
 # 実際のWASMの現場では
 
 - wasm-bindgenがラップしてくれます
+- 詳細なドキュメントは[公式](https://rustwasm.github.io/docs/wasm-bindgen/introduction.html)に譲りますが、今回は簡単に試す
 
 ----
 
-# wasm-bindgen のサンプル
+# wasm-bindgen を導入する
 
+- `wasm-pack` が必須になるのでインストール
+- `wasm-bindgen` を依存に追加
 
+```
+$ cargo install wasm-pack
+$ cargo add wasm-bindgen
+```
 
 ----
 
-# あえて低レイヤなやり方をしています
+# wasm-bindgen 対応関数
+
+- `#[wasm_bindgen]` attributeが使える
+
+```rust
+// &str は戻り値には使えない
+#[wasm_bindgen]
+pub fn hello_bg() -> String {
+    "Hello, world".to_string()
+}
+
+#[wasm_bindgen]
+pub fn welcome_bg(src: &str) -> i32 {
+    src.as_bytes()[0] as i32
+}
+```
+
+----
+
+# wasm-bindgen のコンパイル
+
+```
+$ wasm-pack build --target web
+# ./pkg に一式が生成されるのでコピー
+$ cp -r pkg/ web/pkg/
+```
+
+----
+
+# ブラウザからの利用
+
+```html
+<script async type="module">
+    import init, {hello_bg, welcome_bg} from './pkg/hello_string.js';
+    await init();
+    let result = hello_bg();
+    console.log(result);
+
+    let result2 = welcome_bg("Welcome world");
+    console.log("code of W is: " + result2.toString());
+</script>
+```
+
+----
+
+![w:800 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./bg.png)
+
+----
+
+# 今回、あえて低レイヤなやり方をしています
 
 - 抽象度が低い実装に触れることのメリット:
   - 実際の仕事では抽象度の高いツールを使っても理解しやすくなる
@@ -752,7 +810,12 @@ _class: hero
 
 ----
 
-# （時間があれば解説）
+# 演習課題（上級編）
+
+- **3)** wasm-bindgen が生成してくれるマクロコードを確認し、文字列についてどのようなラッパーコードが生成されるか確認してみよう...。
+  - cargo-expand などを活用できるかもしれない
+  - 手始めは[私と考えが近い人の記事](https://qiita.com/Nanai10a/items/ef508cd6addaa33b3e00)とか。
+- めちゃ大変なので、いつかという気持ちでやってみましょう
 
 ----
 
