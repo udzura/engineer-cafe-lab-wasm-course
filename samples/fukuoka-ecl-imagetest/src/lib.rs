@@ -137,7 +137,7 @@ pub unsafe fn pixelate(width: u32, height: u32, src: *const u8, slen: i32) -> *c
 //     for y in 0..size_y {
 //         for x in 0..size_x {
 //             let pixel = img.get_pixel(x, y);
-//             // simple avagare
+//             // This uses BT.601
 //             let val = pixel[0] as f32 * 0.299 + pixel[1] as f32 * 0.587 + pixel[2] as f32 * 0.114;
 //             let val = [val as u8; 1];
 //             dest.put_pixel(x, y, image::Luma(val));
