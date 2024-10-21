@@ -52,6 +52,78 @@
 
 # 実装コード
 
+```rust
+```
+
+# 動作確認
+
+# ブラウザで「カメラ」を実装する
+
+# 実装コード(html)
+
+```html
+<html>
+    <head>
+        <title>Camera</title>
+        <script async type="text/javascript">...</script>
+    </head>
+    <body>
+        <h1>Camera to WASM</h1>
+        <div>
+            <video autoplay muted playsinline id="myvideo" width="480" height="320"></video>
+        </div>
+        <div>
+            <button type="button" id="snap">Snap!</button>
+        </div>
+        <div>
+            <img id="destination" alt="target" style="display: none;">
+        </div>
+    </body>
+    <script async type="text/javascript">
+        start();
+    </script>
+</html>
+
+```
+
+# 実装コード(script)
+
+```javascript
+window.start = async function() {
+    const video = document.getElementById("myvideo");
+    const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: 'user',
+            width: 480,
+            height: 320,
+        },
+        audio: false,
+    });
+    video.srcObject = stream;
+
+    const [track] = stream.getVideoTracks();
+    const {width, height} = track.getSettings();
+
+    const button = document.getElementById("snap");
+    button.addEventListener("click", e => {
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/png');
+        const image = document.getElementById("destination");
+        image.style.display = "inline";
+        image.src = dataUrl;
+    });
+}
+```
+
+# 動作確認 #2
+
+
+
 # memo: 骨組み
 
 - Rustだけで画像変換を実装

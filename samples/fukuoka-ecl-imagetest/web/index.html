@@ -1,0 +1,125 @@
+<html>
+    <head>
+        <title>Camera</title>
+<script async type="text/javascript">
+window.wasm = null;
+window.grayscaleBlob = null;
+window.pixelate = null;
+window.start = async function() {
+    const video = document.getElementById("myvideo");
+    const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: 'user',
+            width: 480,
+            height: 320,
+        },
+        audio: false,
+    });
+    video.srcObject = stream;
+
+    const [track] = stream.getVideoTracks();
+    const settings = track.getSettings();
+    const {width, height} = settings;
+
+    const obj = {
+        env: {
+            dbg_u32: function(u) {
+                console.log("debug: ", u, String.fromCharCode(u));
+            }
+        }
+    };
+    WebAssembly.instantiateStreaming(fetch("./grayscale.wasm"), obj).then(
+        (wasm) => {
+            window.wasm = wasm.instance;
+            window.grayscaleBlob = wasm.instance.exports.grayscale_blob;
+            window.pixelate = wasm.instance.exports.pixelate;
+            console.log("loaded!")
+        },
+    );
+
+    document.getElementById("snap1").addEventListener("click", e => {
+        if (wasm === null) { return; }
+
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, width, height);
+
+        let offset = wasm.exports.__heap_base;
+        let memory = wasm.exports.memory;
+        memory.grow(20);
+
+        const dataUrl = canvas.toDataURL("image/png");
+
+        let buffer = new Uint8Array(memory.buffer, offset, dataUrl.length);
+
+        for( var i = 0; i < dataUrl.length; i++ ) {
+            buffer[i] = dataUrl.charCodeAt(i);
+        }
+        const resOffset = grayscaleBlob(width, height, offset, dataUrl.length);
+        console.log("no panic!");
+        const resultBuf = new Uint8Array(memory.buffer, resOffset, 1 << 22);
+        let resultBase64 = "";
+        for ( var i = 0; resultBuf[i] != 0; i++) {
+            resultBase64 += String.fromCharCode(resultBuf[i]);
+        }
+        // console.log("data:image/png;base64," + resultBase64);
+
+        const image = document.getElementById("destination");
+        image.style.display = "inline";
+        image.src = "data:image/png;base64," + resultBase64;
+    });
+    document.getElementById("snap2").addEventListener("click", e => {
+        if (wasm === null) { return; }
+
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, width, height);
+
+        let offset = wasm.exports.__heap_base;
+        let memory = wasm.exports.memory;
+        memory.grow(20);
+
+        const dataUrl = canvas.toDataURL("image/png");
+
+        let buffer = new Uint8Array(memory.buffer, offset, dataUrl.length);
+
+        for( var i = 0; i < dataUrl.length; i++ ) {
+            buffer[i] = dataUrl.charCodeAt(i);
+        }
+        const resOffset = pixelate(width, height, offset, dataUrl.length);
+        console.log("no panic!");
+        const resultBuf = new Uint8Array(memory.buffer, resOffset, 1 << 22);
+        let resultBase64 = "";
+        for ( var i = 0; resultBuf[i] != 0; i++) {
+            resultBase64 += String.fromCharCode(resultBuf[i]);
+        }
+        // console.log("data:image/png;base64," + resultBase64);
+
+        const image = document.getElementById("destination");
+        image.style.display = "inline";
+        image.src = "data:image/png;base64," + resultBase64;
+    });
+}
+</script>
+    </head>
+    <body>
+        <h1>Camera to WASM</h1>
+        <div>
+            <video autoplay muted playsinline id="myvideo" width="480" height="320"></video>
+        </div>
+        <div>
+            <button type="button" id="snap1">Grayscale</button>&nbsp;
+            <button type="button" id="snap2">Pixelate</button>
+        </div>
+        <div>
+            <img id="destination" alt="target" style="display: none;">
+        </div>
+    </body>
+    <script async type="text/javascript">
+        start();
+    </script>
+</html>
