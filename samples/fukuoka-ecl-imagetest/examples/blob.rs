@@ -1,16 +1,15 @@
-use std::{default::Default, error::Error, ffi::CStr, fs::File, io::Write, slice::from_raw_parts};
-
+use std::error::Error;
+use std::ffi::CStr;
 use base64::{engine::general_purpose, Engine};
 use fukuoka_ecl_imagetest::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let src = include_bytes!("./original.png");
+    // 画像をexamplesディレクトリにコピーして用意
+    let src = include_bytes!("./source.png");
     let enc = general_purpose::STANDARD.encode(src);
     let enc = format!("data:image/png;base64,{}", enc);
-    // dbg!(&enc);
-    unsafe {
-        let d = grayscale_blob(512, 512, enc.as_ptr(), enc.len() as i32);
-        // let d = pixelate(512, 512, enc.as_ptr(), enc.len() as i32);
+    unsafe { // width, height は画像に合わせる
+        let d = grayscale_blob(660, 495, enc.as_ptr(), enc.len() as i32);
         let b64 = CStr::from_ptr(d as *const i8).to_str().unwrap();
         println!("data:image/png;base64,{}", b64)
     }

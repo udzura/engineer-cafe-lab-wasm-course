@@ -1,8 +1,11 @@
+extern crate image;
+
 use core::str;
-use std::slice::{from_raw_parts, from_raw_parts_mut};
+use core::slice::{from_raw_parts, from_raw_parts_mut};
+use std::error::Error;
 use base64::{engine::general_purpose, Engine};
 
-use image::{codecs::png, load_from_memory_with_format, ImageBuffer};
+use image::{codecs::png, load_from_memory_with_format, ImageBuffer, ImageReader};
 
 #[cfg(target_arch="wasm32")]
 extern "C" {
@@ -14,7 +17,9 @@ fn dbg_error_code(_value: u32) {
 }
 
 #[no_mangle]
-pub unsafe fn grayscale_blob(width: u32, height: u32, src: *const u8, slen: i32) -> *const u8 {
+pub unsafe fn grayscale_blob(
+    width: u32, height: u32, src: *const u8, slen: i32,
+) -> *const u8 {
     let mut result_buf: Vec<u8> = Vec::<u8>::new();
     result_buf.resize(1<<22, 0);
 
@@ -26,7 +31,7 @@ pub unsafe fn grayscale_blob(width: u32, height: u32, src: *const u8, slen: i32)
     let collected = url.split(",").collect::<Vec<&str>>();
     let src = collected[1].as_bytes();
     
-    let blob = general_purpose::STANDARD.decode(src).unwrap();
+    let blob: Vec<u8> = general_purpose::STANDARD.decode(src).unwrap();
 
     let img: image::DynamicImage = load_from_memory_with_format(&blob, image::ImageFormat::Png).unwrap();
     let img: ImageBuffer<image::Rgb<u8>, _> = img.to_rgb8();
@@ -105,26 +110,26 @@ pub unsafe fn pixelate(width: u32, height: u32, src: *const u8, slen: i32) -> *c
     result_buf.as_ptr()
 }
 
-// pub fn grayscale(path: &'static str, dest_path: &'static str) -> Result<(), Box<dyn Error>> {
-//     let img = ImageReader::open(path)?.decode()?;
-//     let img = img.to_rgb8();
-//     let size_x = img.width();
-//     let size_y = img.height();
+pub fn grayscale(path: &'static str, dest_path: &'static str) -> Result<(), Box<dyn Error>> {
+    let img = ImageReader::open(path)?.decode()?;
+    let img = img.to_rgb8();
+    let size_x = img.width();
+    let size_y = img.height();
 
-//     let mut dest = image::GrayImage::new(size_x, size_y);
-//     for y in 0..size_y {
-//         for x in 0..size_x {
-//             let pixel = img.get_pixel(x, y);
-//             // simple avagare
-//             let val = (pixel[0] as f32 + pixel[1] as f32 + pixel[2] as f32) / 3.0;
-//             let val = [val as u8; 1];
-//             dest.put_pixel(x, y, image::Luma(val));
-//         }
-//     }
+    let mut dest = image::GrayImage::new(size_x, size_y);
+    for y in 0..size_y {
+        for x in 0..size_x {
+            let pixel = img.get_pixel(x, y);
+            // simple avagare
+            let val = (pixel[0] as f32 + pixel[1] as f32 + pixel[2] as f32) / 3.0;
+            let val = [val as u8; 1];
+            dest.put_pixel(x, y, image::Luma(val));
+        }
+    }
 
-//     dest.save(dest_path)?;
-//     Ok(())
-// }
+    dest.save(dest_path)?;
+    Ok(())
+}
 
 // /// This uses BT.601
 // pub fn grayscale2(path: &'static str, dest_path: &'static str) -> Result<(), Box<dyn Error>> {

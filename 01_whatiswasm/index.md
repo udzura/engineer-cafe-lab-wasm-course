@@ -811,3 +811,13 @@ _class: hero
     - 線形メモリ
 - ご連絡: #3 の日程が**平日夜**になりました。 12/16(月) 19:00 ~
   - ご了承の上、ご調整をお願いします :bow:
+
+----
+
+# 参考図書について
+
+- [ハンズオンWebAssembly](https://www.oreilly.co.jp/books/9784814400102/)
+  - 副読本として推奨
+  - 環境自体は C++/Emscripten なので注意
+
+![bg right w:400](./wabook.png)

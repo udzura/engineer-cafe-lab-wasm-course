@@ -33,6 +33,7 @@ window.start = async function() {
             window.wasm = wasm.instance;
             window.grayscaleBlob = wasm.instance.exports.grayscale_blob;
             window.pixelate = wasm.instance.exports.pixelate;
+            wasm.instance.exports.memory.grow(10);
             console.log("loaded!")
         },
     );
@@ -48,7 +49,6 @@ window.start = async function() {
 
         let offset = wasm.exports.__heap_base;
         let memory = wasm.exports.memory;
-        memory.grow(20);
 
         const dataUrl = canvas.toDataURL("image/png");
 
@@ -70,39 +70,38 @@ window.start = async function() {
         image.style.display = "inline";
         image.src = "data:image/png;base64," + resultBase64;
     });
-    document.getElementById("snap2").addEventListener("click", e => {
-        if (wasm === null) { return; }
+    // document.getElementById("snap2").addEventListener("click", e => {
+    //     if (wasm === null) { return; }
 
-        const canvas = document.createElement('canvas');
-        canvas.setAttribute('width', width);
-        canvas.setAttribute('height', height);
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, width, height);
+    //     const canvas = document.createElement('canvas');
+    //     canvas.setAttribute('width', width);
+    //     canvas.setAttribute('height', height);
+    //     const context = canvas.getContext('2d');
+    //     context.drawImage(video, 0, 0, width, height);
 
-        let offset = wasm.exports.__heap_base;
-        let memory = wasm.exports.memory;
-        memory.grow(20);
+    //     let offset = wasm.exports.__heap_base;
+    //     let memory = wasm.exports.memory;
 
-        const dataUrl = canvas.toDataURL("image/png");
+    //     const dataUrl = canvas.toDataURL("image/png");
 
-        let buffer = new Uint8Array(memory.buffer, offset, dataUrl.length);
+    //     let buffer = new Uint8Array(memory.buffer, offset, dataUrl.length);
 
-        for( var i = 0; i < dataUrl.length; i++ ) {
-            buffer[i] = dataUrl.charCodeAt(i);
-        }
-        const resOffset = pixelate(width, height, offset, dataUrl.length);
-        console.log("no panic!");
-        const resultBuf = new Uint8Array(memory.buffer, resOffset, 1 << 22);
-        let resultBase64 = "";
-        for ( var i = 0; resultBuf[i] != 0; i++) {
-            resultBase64 += String.fromCharCode(resultBuf[i]);
-        }
-        // console.log("data:image/png;base64," + resultBase64);
+    //     for( var i = 0; i < dataUrl.length; i++ ) {
+    //         buffer[i] = dataUrl.charCodeAt(i);
+    //     }
+    //     const resOffset = pixelate(width, height, offset, dataUrl.length);
+    //     console.log("no panic!");
+    //     const resultBuf = new Uint8Array(memory.buffer, resOffset, 1 << 22);
+    //     let resultBase64 = "";
+    //     for ( var i = 0; resultBuf[i] != 0; i++) {
+    //         resultBase64 += String.fromCharCode(resultBuf[i]);
+    //     }
+    //     // console.log("data:image/png;base64," + resultBase64);
 
-        const image = document.getElementById("destination");
-        image.style.display = "inline";
-        image.src = "data:image/png;base64," + resultBase64;
-    });
+    //     const image = document.getElementById("destination");
+    //     image.style.display = "inline";
+    //     image.src = "data:image/png;base64," + resultBase64;
+    // });
 }
 </script>
     </head>
@@ -113,7 +112,7 @@ window.start = async function() {
         </div>
         <div>
             <button type="button" id="snap1">Grayscale</button>&nbsp;
-            <button type="button" id="snap2">Pixelate</button>
+            <!-- button type="button" id="snap2">Pixelate</button -->
         </div>
         <div>
             <img id="destination" alt="target" style="display: none;">
