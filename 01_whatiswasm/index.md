@@ -19,6 +19,28 @@ _class: hero
 
 ----
 
+<!--
+_class: profile
+-->
+
+# Uchio Kondo (@udzura)
+
+- 福岡市エンジニアカフェ ハッカーサポーター
+- フィヨルドブートキャンプ アドバイザー
+- [RubyKaigi Speaker (2016 ~)](https://rubykaigi-speakers.vercel.app/speakers/Uchio+KONDO)
+- 共同翻訳: 『入門eBPF』(オライリージャパン)
+- 好きなYouTuber: けんた食堂
+
+![w:370](./rk2024-me-2.png)
+
+----
+
+### 最近やってること: 自作 WASM Runtime
+
+[![h:480 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./cap.png)](https://x.com/udzura/status/1850203383313080686)
+
+----
+
 # 今日やること
 
 - WebAssemblyとは？
@@ -374,7 +396,7 @@ $ cargo build --target wasm32-wasi
 # wasmtimeで動かす
 
 ```
-$ wasmtime ../../target/wasm32-wasi/debug/hello-wasm.wasm 
+$ wasmtime ./target/wasm32-wasi/debug/hello-wasm.wasm 
 Hello Engineer Cafe!
 ```
 
@@ -445,6 +467,7 @@ _class: hero
 # first project の方のバイナリを使う
 
 - `target/wasm32-unknown-unknown/debug/hello_wasm.wasm` の方を使う
+  - `fib()` を実装した方です
 - `web` というディレクトリを新たに作ってそこへコピー
 
 ```
@@ -463,7 +486,7 @@ $ cp target/wasm32-unknown-unknown/debug/hello_wasm.wasm web
     <title>My first WASM</title>
     <script async type="text/javascript">
         const obj = {
-            imports: {},
+            env: {},
         };
         WebAssembly.instantiateStreaming(fetch("./hello_wasm.wasm"), obj).then(
             (obj) => {
@@ -547,7 +570,7 @@ WebAssembly.instantiateStreaming(fetch("./hello2.wasm"), obj).then(
 
 # エラーになります
 
-![w:950](./error.png)
+![w:950 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./error.png)
 
 ----
 
@@ -640,11 +663,11 @@ Import[1]:
 
 # これをブラウザで使うには？
 
-- 前のコードをそのまま流用してみる
+- 前のコード（`fib()` を実行した時のhtml）をそのまま流用して動かしてみる
 - （また）こういうエラーが出る
 
 ```
-index3.html:1 Uncaught (in promise) TypeError: WebAssembly.instantiate(): 
+index.html:1 Uncaught (in promise) TypeError: WebAssembly.instantiate(): 
 Import #0 "env": module is not an object or function
 ```
 
@@ -656,11 +679,11 @@ Import #0 "env": module is not an object or function
 
 ```javascript
 const importObject = {
-    imports: { .... },
+    env: { .... },
 };
 WebAssembly.instantiateStreaming(
     fetch("./hello.wasm"),
-    importObject
+    importObject, // <- Here
 ).then(...)
 ```
 
@@ -821,3 +844,14 @@ _class: hero
   - 環境自体は C++/Emscripten なので注意
 
 ![bg right w:400](./wabook.png)
+
+----
+
+# 参考図書について
+
+- [実践Rust入門](https://gihyo.jp/book/2019/978-4-297-10559-4)
+  - 今後、少し難しいRustのコードが出てくるので...
+  - @udzura が読んだ本
+  - 基本概念を理解するのに良い本
+
+![bg right w:360](./rustbook.png)
