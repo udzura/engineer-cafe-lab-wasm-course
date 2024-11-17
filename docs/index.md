@@ -12,3 +12,4 @@ theme: default
 - [`#1 our first wasm`](./2024-25/01_whatiswasm)
 - [`#2 step tp string`](./2024-25/02_string)
 - [`#3 first application`](./2024-25/03_wasmadvanced)
+- [`#4 hack scratch`](./2024-25/04_hackscratch)
