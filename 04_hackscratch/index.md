@@ -262,7 +262,7 @@ class Scratch3FukuokaBlocks {
                     text: 'turn video [VIDEO_STATE]',
                     arguments: {
                         VIDEO_STATE: {
-                            type: ArgumentType.NUMBER,
+                            type: ArgumentType.STRING,
                             menu: 'VIDEO_STATE',
                             defaultValue: 'on',
                         }
@@ -309,10 +309,14 @@ class Scratch3FukuokaBlocks {
         canvas.width = imageData.width;
         canvas.height = imageData.height;
         canvas.getContext('2d').putImageData(imageData, 0, 0);
-        console.log(canvas.toDataURL());
-        // TODO: ダウンロードさせたいけど...
+
+        let x = window.open("", "_blank", `width=${canvas.width},height=${canvas.height}`);
+        x.document.open();
+        x.document.appendChild(canvas);
     }
 ```
+
+----
 
 ## scratchの画面のどこかに表示したい
 
@@ -325,7 +329,6 @@ class Scratch3FukuokaBlocks {
         canvas.width = imageData.width;
         canvas.height = imageData.height;
         canvas.getContext('2d').putImageData(imageData, 0, 0);
-        console.log(canvas.toDataURL());
 
         this.runtime.ioDevices.video.disableVideo();
         this.captureSkinId = this.runtime.renderer.createBitmapSkin(canvas, 1);
@@ -355,3 +358,108 @@ $ python3 -m http.server 8080
 ```
 
 - あとはgithub pagesなどでそのまま公開すればOK
+
+----
+
+<!--
+_class: hero
+-->
+
+# まとめ
+
+----
+
+# 今日のまとめ
+
+## 今日はScratchと関係するJavaScriptに向き合った日
+
+- Scratchのオリジナルブロック(MOD)の開発環境構築
+- ScratchのオリジナルブロックのHello World
+- Scratchでビデオカメラを扱う方法
+- Scratchの背景スキン画像を更新する方法
+- Scratch MODをインターネットに公開する方法
+
+----
+
+<!--
+_class: hero
+-->
+
+# 演習課題
+
+----
+
+# 演習課題
+
+- **1)** 現状、ビデオ画面を撮影してスキンを更新後、「ビデオオフ」を実行しても何も起きません。
+  - 背景がクリアされた方が挙動が自然なはず？
+  - `disableVideo()` されたらどういう場合でもスキンがクリアされる挙動を実装してみましょう
+    - ヒントになるコードは以下です
+
+```javascript
+// skinId を保存することができるはず？
+this.captureSkinId = this.runtime.renderer.createBitmapSkin(canvas, 1);
+// skinIdを元にスキンを削除する関数
+this.runtime.renderer.destroySkin(this.captureSkinId);
+```
+
+----
+
+# 演習課題
+
+- **2)** `videoToggle()` に一つパラメータを追加しましょう（数値型）
+  - そのパラメータの秒数後に画面が撮影される挙動を実装してみましょう
+    - ヒント: [`setTimeout()` メソッド](https://developer.mozilla.org/ja/docs/Web/API/Window/setTimeout)
+    - さらなるヒントになるコードは次のスライドにて
+
+----
+
+## 演習 2) のヒント
+
+```javascript
+// パラメータ入りのブロック
+{
+    opcode: 'snapshotDelayed',
+    blockType: BlockType.COMMAND,
+    text: 'snap video in [DELAY] second(s)',
+    arguments: {
+        DELAY: {
+            type: ArgumentType.NUMBER,
+            defaultValue: 0,
+        }
+    }
+}, //...
+
+// パラメータを取得するには？
+snapshotDelayed(args) {
+    const delay = args.DELAY;
+    // delay は数値で取得できる
+    //...
+}
+```
+
+----
+
+# 次回
+
+- #5 Scratch とWebAssemblyを連携させよう
+  - <span style='font-size: 30pt'>予定: 2025/2/XX(YY) 14:00 start</span>
+  - キーワード:
+    - 今までの総まとめ？
+    - (もしかしたら) WebWorker
+
+----
+
+# 参考資料
+
+- Scratchの拡張の開発はまとまった情報が少ないです！
+- web記事（公式/準公式）
+  - [MDN](https://developer.mozilla.org/ja/docs/Web/JavaScript) の関連ページ（Video, ImageData）
+  - [ビデオモーションセンサー拡張機能(ja公式Wiki)](https://ja.scratch-wiki.info/wiki/%E3%83%93%E3%83%87%E3%82%AA%E3%83%A2%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%BB%E3%83%B3%E3%82%B5%E3%83%BC%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD)
+  - [Scratch 3.0の拡張機能を作ってみよう(ja公式Wiki)](https://ja.scratch-wiki.info/wiki/Scratch_3.0%E3%81%AE%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%A6%E3%81%BF%E3%82%88%E3%81%86)
+  - [GitHub Docs - GitHub Pages サイトを作成する](https://docs.github.com/ja/pages/getting-started-with-github-pages/creating-a-github-pages-site)
+- 個人のブログ記事（ありがとうございます）
+  - [Scratchを拡張しよう！(2)地図を表示](https://zenn.dev/naoji/articles/scratch-extension-0020)
+  - [scratch-render.js で 何か作ってみよう](http://blogger.firefirestyle.net/2017/12/scratch-30-9-scratch-renderjs.html)
+
+他...
