@@ -1,13 +1,37 @@
-# #5 Scratch とWebAssemblyを連携させよう
+----
+marp: true
+title: "WebAssemblyでScratchプラグインを作ろう!"
+description: "At Engineer Cafe Lab Fukuoka 2025/02"
+header: "WebAssemblyでScratchプラグインを作ろう!"
+footer: "#5 Scratch とWebAssemblyを連携させよう"
+theme: ecl
+image: https://udzura.jp/engineer-cafe-lab-wasm-course/2024-25/05_wasmandscratch/ogp.png
+paginate: true
+----
+
+<!--
+_class: hero
+-->
+
+# WebAssemblyで<br>Scratchプラグインを作ろう!
+
+## #5 Let's Make WebAssembly and Scratch Work Together!
+
+----
 
 # いよいよ総まとめ！
+
+----
 
 # 前回の復習も兼ねて
 
 - #4 の演習問題の解説を行います
   - （時間によりますが）
 
+----
+
 # 環境は前回のものをそのまま使用しましょう
+
 
 ----
 
@@ -180,7 +204,7 @@ canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
 
 # 全て完成！！
 
-- Scratch のブロックからWebAssemblyの関数を呼び出し、画像加工をすることができた！
+- Scratch のブロックからWebAssemblyの関数を呼び出し、画像加工をすることができました！
 
 ----
 
@@ -189,6 +213,10 @@ _class: hero
 -->
 
 # 〜 完 〜
+
+----
+
+- TODO: 男坂の画像
 
 ----
 
@@ -203,7 +231,9 @@ _class: hero
 # 力ある人のため最終演習課題...
 
 - 第5回の内容は、今までの高難度を反映して分量を少なくしています
-- ですが、ここまでの内容も余裕を持ってこなしてきた方のために最後の課題を出します
+  - 余った時間でこれまでの内容の確認や復習をしましょう！
+- ですが、ここまでの内容はすべて余裕を持ってこなしてきた方のために...
+  - 最後の課題を出します
 
 ----
 
@@ -215,29 +245,25 @@ _class: hero
 $ cp path/tp/hello_wasm.wasm static/wasm/fib.wasm
 ```
 
-- このfibをscratchのブロックにしてみましょう
+## このfibをscratchのブロックにしてみましょう
 
 ----
 
-# 実装例
+### 実装例
 
 ```javascript
     constructor(runtime) {
         this.runtime = runtime;
         this.fib = null;
-
-        const obj2 = {}
-        WebAssembly.instantiateStreaming(fetch("/static/wasm/fib.wasm"), obj2).then(
+        WebAssembly.instantiateStreaming(fetch("/static/wasm/fib.wasm"), {}).then(
             (wasm) => {
                 this.fib = wasm.instance;
-                log.debug("fib load OK")
             },
         );
     }
-
     getInfo() {
         return {
-            id: 'fukuoka',
+            id: 'fiboka',
             name: 'Fib calc',
             menuIconURI: fukuokaIcon,
             blockIconURI: fukuokaIcon,
@@ -257,14 +283,12 @@ $ cp path/tp/hello_wasm.wasm static/wasm/fib.wasm
             menus: {},
         };
     }
-
     reportFib(args) {
         const n = args.N;
-        const result = this.fib.exports.fib(n)
-        log.debug(`answer: fib(${n}) = ${result}`)
-        return result
+        const result = this.fib.exports.fib(n);
+        log.debug(`answer: fib(${n}) = ${result}`);
+        return result;
     }
-
 ```
 
 ----
@@ -273,12 +297,15 @@ $ cp path/tp/hello_wasm.wasm static/wasm/fib.wasm
 
 - このReporterはこんな感じで使えばいい
 
+![w:650 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./image.png)
 
 ----
 
 # しかし？
 
 - ある程度以上大きなfib(N)を求めようとすると...？
+
+![w:650 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./image-1.png)
 
 ----
 
@@ -315,7 +342,7 @@ $ cp path/tp/hello_wasm.wasm static/wasm/fib.wasm
 
 ----
 
-# `fib_worker.js` の編集
+### `fib_worker.js` の編集
 
 ```javascript
 this.wasm = null;
@@ -323,26 +350,20 @@ obj = {};
 WebAssembly.instantiateStreaming(fetch("/static/wasm/fib.wasm"), obj).then(
     (wasm) => {
         this.wasm = wasm.instance;
-        console.log("Worker: wasm load OK")
     },
 );
-
 onmessage = (e) => {
     console.log("Worker: Message received from main script");
     if (!this.wasm) {
-        console.log("Worker: failed...");
-        return;
+        console.log("Worker: failed..."); return;
     }
     const n = e.data[0]
     if (isNaN(n)) {
-        console.log("Worker: failed...");
-        return;
+        console.log("Worker: failed..."); return;
     } else {
-        // console.log(this.wasm);
         const result = this.wasm.exports.fib(n);
         console.log('Worker: Posting message back to main script');
         console.log(`Worker: answer = ${result}`);
-        // postMessage(result.toString());
     }
 }
 ```
@@ -352,23 +373,41 @@ onmessage = (e) => {
 # Scratchからの呼び出し側の編集
 
 ```javascript
+    constructor(runtime) {
+        // Workerインスタンスを作り、fib_worker.jsをロードする
+        this.worker = new Worker("/static/workers/fib_worker.js");
+    }
+    // ...
+    reportFib(args) {
+        const n = args.N;
+        // Workerインスタンスにメッセージを送るよう変更
+        this.worker.postMessage([n])
+        return -1; // dummy
+    }
 ```
 
 ----
 
 # Fibは成功はしていそう
 
-- 正しい数がコンソールに表示されること
-- 大きな数を与えても、メインスレッドがブロックしないこと
-  - GUI操作が普通にできていること
+![w:520 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](image-2.png)
 
-## ということで、思い処理でもUIがブロックしなくなった
+- 正しい数がコンソールに表示される
+- 大きな数を与えても、メインスレッドがブロックしない
+  - GUI操作が普通にできていることを確認できる
+
+----
+
+# ということで、思い処理でもUIがブロックしなくなった
+
+- 無事問題が解決！
 
 ----
 
 # ...あれ？
 
 - 計算した値ってどうやって受け取るん？
+- console開かないとわからないんじゃダメそう
 
 ----
 
@@ -379,13 +418,17 @@ onmessage = (e) => {
 - メインスレッド側
   - workerインスタンスに `worker.onmessage` ハンドラがある
   - そこで受け取った値を処理する
-  - イベント駆動
+  - イベント駆動っぽくできればかっこいい
 
 ----
 
 # Scratchでイベント駆動をするには...
 
 - `BlockType.HAT` を使う！
+- 右の形状のブロックが `BlockType.HAT` タイプ
+  - あーあれか...のやつ
+
+![bg right w:550 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./image-3.png)
 
 ----
 
@@ -405,7 +448,7 @@ onmessage = (e) => {
 
 ----
 
-## ブロックの定義
+### ブロックの定義
 
 ```javascript
     blocks: [
@@ -428,7 +471,7 @@ onmessage = (e) => {
         {
             opcode: 'reportFib',
             blockType: BlockType.REPORTER,
-            text: 'answer of fib',
+            text: 'answer of fib()',
         },
     ] //...
 ```
@@ -436,6 +479,8 @@ onmessage = (e) => {
 ----
 
 ## opハンドラの定義
+
+- まず、 COMMAND 型のブロックの中で `postMessage()` させる
 
 ```javascript
     startCalcFib(args) {
@@ -447,14 +492,36 @@ onmessage = (e) => {
         this._workerMessage = null;
         this.worker.postMessage([n]);
     }
+```
 
+----
+
+## opハンドラの定義
+
+- HAT型ブロックのハンドラは、 `true` を返した時にイベントが発火する
+  - ブロックを利用したらポーリングで判定処理が実行され続ける
+  - なので中身の処理は比較だけなど、軽いもの推奨
+
+
+```javascript
     whenFinishedFib(args) {
+        // コメントインするとたくさんログが流れる:
+        // console.log("Fire whenFinishedFib");
         if (this._workerRunning && this._workerMessage !== null) {
             this._workerRunning = false
             return true;
         }
     }
+```
 
+----
+
+## opハンドラの定義
+
+- REPORTER 型ブロックでは `this._workerMessage` の値をそのまま返す
+  - nullならダミーで -1 を返しておく
+
+```javascript
     reportFib(args) {
         if (this._workerMessage === null) {
             return -1;
@@ -464,6 +531,8 @@ onmessage = (e) => {
     }
 ```
 
+- これでハンドラ実装は以上
+
 ----
 
 ## イベントのライフサイクルを作図してみた
@@ -472,7 +541,7 @@ TODO: 頑張る
 
 ----
 
-## constructorに戻って
+## constructorに戻って変更
 
 - `onmessage` イベントを受け取って変数を更新するように変更
 
@@ -493,6 +562,7 @@ TODO: 頑張る
 
 ## 最後にworker
 
+- gui の `static/workers/fib_worker.js` を編集
 - 最後に `postMessage` させる
 
 ```javascript
@@ -512,18 +582,26 @@ onmessage = (e) => {
 
 # 最後の動作確認！
 
-
 ----
 
 ## 簡単な計算
+
+![bg right w:550 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./image-4.png)
 
 ----
 
 ## 重い処理は...
 
+![bg right:70% w:400 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./image-5.png)
+
+![bg right w:400 drop-shadow:0,5px,10px,rgba(0,0,0,.4)](./image-6.png)
+
 ----
 
-# より複雑なブロックも作れた
+# より複雑なブロックも作れるようになった！
+
+- COMMAND型の結果をREPORTER型で取得する
+- HAT型でイベント駆動をする
 
 ----
 
@@ -537,7 +615,7 @@ _class: hero
 
 # 今日のまとめ
 
-## WebAssemblyとScratchと、友達になれたかな？
+## WebAssemblyと、Scratchと、友達になれたかな？
 
 - ScratchからWASMを呼ぶ方法
   - 2パターン
@@ -546,10 +624,11 @@ _class: hero
 
 ----
 
-# 最後のはずなのに追加の演習課題
+# 最後のはずなのに... 追加の演習課題
 
 - **1)** WebWorkerのエラーを、メインスレッドで受け取れるようにするにはどうすればいいでしょうか？
 - **2)** WebWorkerのエラーをScratchのブロック側で制御できるようにしたいです。
+  - 今のままでは、失敗しても、 **Scratch のプログラマから**エラーが見えません
   - どう言う設計をして、どう言うブロックを用意するといいでしょうか？
 
 // WASM でなくなってる、と言うツッコミは置いといて...

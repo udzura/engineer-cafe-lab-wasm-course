@@ -1,7 +1,7 @@
 ----
 marp: true
 title: "WebAssemblyでScratchプラグインを作ろう!"
-description: "At Engineer Cafe Lab Fukuoka 2024/12"
+description: "At Engineer Cafe Lab Fukuoka 2025/01"
 header: "WebAssemblyでScratchプラグインを作ろう!"
 footer: "#4 Scratch をハックする方法を学ぼう"
 theme: ecl
