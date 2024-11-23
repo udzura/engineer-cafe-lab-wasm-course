@@ -21,6 +21,12 @@ _class: hero
 
 # 今回から少し難しくなるよ
 
+<!--
+  全体に
+  コマンドを実演しながらやる
+  コード例もなるべく見せる
+-->
+
 ----
 
 # 今日やること
@@ -77,6 +83,10 @@ pub fn hello() -> &'static str {
 $ cargo build --target wasm32-unknown-unknown
 ```
 
+<!-- 前回のCargo.tomlを表示してあげる -->
+
+<!-- &'static str の説明は口頭で頑張る、ややおまじない風にはなるが... // Stringの方が結局いいか？ -->
+
 ----
 
 # 動かしてみるとどうなる？
@@ -129,7 +139,7 @@ Export[4]:
 
 # 何が何やら...
 
-（雰囲気でryの画像を貼る）
+// TODO: 俺たちは雰囲気でWASMをやっているの画像
 
 ----
 
@@ -251,7 +261,7 @@ $ wasm-objdump -d \
 
 ----
 
-```wat
+```asm
 ;; 最初の引数 = バッファ（メモリ上のoffset）
 local.get 0
 ;; 132の 12 をスタックに
@@ -269,7 +279,7 @@ i32.store 2 0
 end
 ```
 
-<!-- memoryが 2 になっている理由は不明、普通に後述のコードで動くため保留する -->
+<!-- storeの第一引数 2 はalignmentだが多くの実装でまだ無視されている予感がする -->
 
 ----
 
@@ -293,6 +303,12 @@ WebAssembly.instantiateStreaming(fetch("./string1.wasm"), obj).then(
     },
 );
 ```
+
+<!-- 
+  動かない時
+  fetch("./string1.wasm") のファイル名を確認する
+  consoleのエラーを伝える（全部コピペすること/画面キャプチャでもOK
+-->
 
 ----
 
@@ -351,9 +367,12 @@ pub unsafe fn hello3(buf: *mut u8, buflen: i32) {
 
 ----
 
-# 文字列の返し方、どうすべきか
+# 文字列の返し方、どうすべきか？
 
 - あくまで @udzura のいち意見です
+- 参考程度（ベターなやり方がありそう）
+
+----
 
 ## 簡易フローチャート
 
@@ -414,6 +433,13 @@ WebAssembly.instantiateStreaming(fetch("./string1.wasm"), obj).then(
 );
 ```
 
+<!--
+  ポイント: 今回はHello, World以外のところで文字列を何も動的にアロケートしていない
+  WASMの中でメモリ確保をする可能性がある場合、WASMの内部でアロケータを経由して呼んだ領域を使わせるのがベター
+  （でないと、メモリ管理できてない状態になるはず、それはたまたま動いても不安）
+  TODO: 03をnaosu
+-->
+
 ----
 
 # 動作確認
@@ -449,6 +475,10 @@ Type[14]:
 Function[57]:
  - func[3] sig=2 <welcome>
 ```
+
+<!--
+  ポイント: これも文字列を何もアロケートしていない
+-->
 
 ----
 
@@ -537,6 +567,10 @@ pub unsafe fn welcome2(src: *const u8, srclen: i32) -> i32 {
 ```
 
 - 本講義では、文字列を戻すときに合わせてこちらを使う
+
+<!--
+  ポイント: from_raw_partsを使っているので新たに何もアロケートしていない
+-->
 
 ----
 
@@ -655,7 +689,9 @@ WebAssembly.instantiateStreaming(fetch("./wc.wasm"), obj).then(
     (wasm) => {
         window.wasmInstance = wasm.instance;
         window.wordcount = wasm.instance.exports.wordcount;
-        console.log("loaded!")
+        // 作業用の領域を拡張する
+        wasmInstance.exports.memory.grow(1);
+        console.log("loaded!");
     },
 );
 ```
@@ -700,6 +736,11 @@ pub unsafe fn wordcount(src: *mut u8, srclen: i32) -> i32 {
     count
 }
 ```
+
+<!--
+  ポイント: from_raw_partsを使っているので新たに何もアロケートしていない
+  そのため、WASM外部で確保したメモリを使わせても問題が起きない
+-->
 
 ----
 
@@ -834,6 +875,13 @@ _class: hero
   - WASMレベルでは:
     `upcase(srcp: i32, slen: i32, destp: i32, dlen: i32) -> nil`
 - **2)** 1) をブラウザで呼び出して動作確認しましょう。
+
+<!--
+  ポイント: 本講義のような、新たに何もアロケートしない方法を推奨する
+  内部で String::from(&str) すると意図しない挙動になるかも...
+  もしくはもう一つ関数をexportし、そこでslen長ののStringを作らせてもいいと思われる
+-->
+
 
 ----
 
