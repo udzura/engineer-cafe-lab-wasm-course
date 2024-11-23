@@ -20,14 +20,18 @@ use image::{codecs::png, load_from_memory_with_format, ImageBuffer, ImageReader}
 pub unsafe fn grayscale_blob(
     width: u32, height: u32, src: *const u8, slen: i32,
 ) -> *const u8 {
+    let src = from_raw_parts(src, slen as usize);
+    let mut tmp_buf: Vec<u8> = Vec::<u8>::new();
+    tmp_buf.resize(slen as usize, 0);
+    tmp_buf.copy_from_slice(src);
+
     let mut result_buf: Vec<u8> = Vec::<u8>::new();
     result_buf.resize(1<<22, 0);
 
-    let src = from_raw_parts(src, slen as usize);
     // data url: e.g.
     // data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAA
     // AAFACAYAAABkyK97AAAAAXNSR0IArs4c6QAAIABJREFUeF7svU...
-    let url = str::from_utf8(src).unwrap();
+    let url = str::from_utf8(&tmp_buf).unwrap();
     let collected = url.split(",").collect::<Vec<&str>>();
     let src = collected[1].as_bytes();
     

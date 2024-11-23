@@ -57,9 +57,10 @@ window.start = async function() {
         for( var i = 0; i < dataUrl.length; i++ ) {
             buffer[i] = dataUrl.charCodeAt(i);
         }
+        console.log(offset, dataUrl.length);
         const resOffset = grayscaleBlob(width, height, offset, dataUrl.length);
-        console.log("no panic!");
         const resultBuf = new Uint8Array(memory.buffer, resOffset, 1 << 22);
+        console.log("no panic!");
         let resultBase64 = "";
         for ( var i = 0; resultBuf[i] != 0; i++) {
             resultBase64 += String.fromCharCode(resultBuf[i]);

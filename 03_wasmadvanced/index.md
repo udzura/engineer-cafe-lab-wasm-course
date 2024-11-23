@@ -116,7 +116,7 @@ TBA: 当日だけ引用の範囲で画像を出す
 
 - imageクレートを使う
   - なるべく低レイヤと言ったが...
-  - 流石にPNGのフォーマットをパースして、までは時間がないため...
+  - 流石にPNGのフォーマットをパースして、までは時間がないため...ありもの（と言っても準標準に近い）を使います
 - このクレートはそのままWASMでも動く！
 
 ----
@@ -191,7 +191,7 @@ use std::error::Error;
 use fukuoka_ecl_imagetest::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    grayscale("./source.png", "./result.png")?;
+    grayscale("./original.png", "./result.png")?;
     Ok(())
 }
 ```
@@ -348,7 +348,8 @@ window.start = async function() {
 # WASMに合わせて設計方針を変える
 
 - データをdataURL形式で取得したい
-  - `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAA...` など
+  - `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAA...` みたいな文字列
+  - ASCIIのみにできる
   - 完全なバイナリは取り扱いづらいので...
 - 返却もbase64にエンコードしたい
   - そのままdataURL形式に流用
@@ -384,13 +385,18 @@ use base64::{engine::general_purpose, Engine};
 pub unsafe fn grayscale(
     width: u32, height: u32, src: *const u8, slen: i32,
 ) -> *const u8 {
-    // 最初に返却用のバッファを、大きく確保する
+    let src = from_raw_parts(src, slen as usize);
+    // メモリを内部でも確保してコピーする（元の領域が万一破壊されるのを防ぐ）
+    let mut tmp_buf: Vec<u8> = Vec::<u8>::new();
+    tmp_buf.resize(slen as usize, 0);
+    tmp_buf.copy_from_slice(src);
+
+    // 返却用のバッファを、大きく確保する
     let mut result_buf: Vec<u8> = Vec::<u8>::new();
     result_buf.resize(1<<22, 0);
 
-    // URLをstrに変換し、base64だけ取り出す
-    let src = from_raw_parts(src, slen as usize);
-    let url = str::from_utf8(src).unwrap();
+    // URLをstrに変換し、base64部分だけ取り出す
+    let url = str::from_utf8(&tmp_buf).unwrap();
     let collected = url.split(",").collect::<Vec<&str>>();
     let src = collected[1].as_bytes();
     // decode base64
