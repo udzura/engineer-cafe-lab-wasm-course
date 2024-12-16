@@ -654,12 +654,12 @@ _class: hero
 # 次回
 
 - #4 Scratch をハックする方法を学ぼう
-  - <span style='font-size: 30pt'>予定: 2025/1/XX(YY) 14:00 start</span>
+  - <span style='font-size: 30pt'>予定: 2025/1/23(Thu) 19:00 start</span>
   - キーワード:
     - ScratchのMOD
     - React
     - TypeScript
-- TBA: 2025年の予定...
+- ちなみに最終回は 2025/2/20(Thu) 19:00 start 予定です
 
 ----
 
