@@ -613,7 +613,7 @@ snapshotDelayed(args) {
 # 次回
 
 - #5 Scratch とWebAssemblyを連携させよう
-  - <span style='font-size: 30pt'>予定: 2025/2/XX(YY) 14:00 start</span>
+  - <span style='font-size: 30pt'>予定: 2025/2/27(木) 19:00 start</span>
   - キーワード:
     - 今までの総まとめ
     - (チャレンジ的内容) WebWorker
