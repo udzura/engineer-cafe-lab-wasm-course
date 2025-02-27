@@ -143,7 +143,7 @@ class Scratch3FukuokaBlocks {
 
 ## DataURL ができた
 
-TODO: capture
+- デモ画面をご覧ください。
 
 ----
 
@@ -398,7 +398,7 @@ onmessage = (e) => {
 
 ----
 
-# ということで、思い処理でもUIがブロックしなくなった
+# ということで、重い処理でもUIがブロックしなくなった
 
 - 無事問題が解決！
 
@@ -535,12 +535,6 @@ onmessage = (e) => {
 
 ----
 
-## イベントのライフサイクルを作図してみた
-
-TODO: 頑張る
-
-----
-
 ## constructorに戻って変更
 
 - `onmessage` イベントを受け取って変数を更新するように変更
@@ -576,6 +570,18 @@ onmessage = (e) => {
         postMessage([result]); // ここを追加
     }
 }
+```
+
+----
+
+## イベントの流れを図示してみた
+
+- このようになるイメージ。...
+
+```plaintext
+startCalcFib -> postMessage -> [Worker側処理]
+[Worker側処理] -> onmessage -> _workerMessage = data
+whenFinishedFib -> _workerMessage !== null -> reportFib
 ```
 
 ----
